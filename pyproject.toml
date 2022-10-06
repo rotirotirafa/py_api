@@ -10,6 +10,8 @@ Flask = "^2.2.2"
 PyMySQL = "^1.0.2"
 pytest = "^7.1.2"
 SQLAlchemy = "^1.4.40"
+Flask-RESTful = "^0.3.9"
+psycopg2 = "^2.9.4"
 
 [tool.poetry.dev-dependencies]
 
