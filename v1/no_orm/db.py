@@ -1,32 +1,34 @@
 #!/usr/bin/python
 import psycopg2
 
+from config import DB_HOST, DB_NAME, DB_USERNAME, DB_PASSWORD, DB_PORT
 
 
 def connect():
     """ Connect to the PostgreSQL database server """
     conn = None
     try:
-        # read connection parameters
-        params = config()
-
-        # connect to the PostgreSQL server
-        print('Connecting to the PostgreSQL database...')
-        conn = psycopg2.connect(**params)
+        conn = psycopg2.connect(
+            host=DB_HOST,
+            port=DB_PORT,
+            database=DB_NAME,
+            user=DB_USERNAME,
+            password=DB_PASSWORD
+        )
 
         # create a cursor
-        cur = conn.cursor()
+        cursor = conn.cursor()
 
         # execute a statement
         print('PostgreSQL database version:')
-        cur.execute('SELECT version()')
+        cursor.execute('SELECT version()')
 
         # display the PostgreSQL database server version
-        db_version = cur.fetchone()
+        db_version = cursor.fetchone()
         print(db_version)
 
         # close the communication with the PostgreSQL
-        cur.close()
+        cursor.close()
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
@@ -35,5 +37,42 @@ def connect():
             print('Database connection closed.')
 
 
+# if __name__ == '__main__':
+#     connect()
+#
+
+class DatabaseConnection:
+
+    def __init__(self, conn=None, cursor=None):
+        self.conn = None
+        self.cursor = self.connect()
+
+    def connect(self):
+        self.conn = psycopg2.connect(
+            host=DB_HOST,
+            port=DB_PORT,
+            database=DB_NAME,
+            user=DB_USERNAME,
+            password=DB_PASSWORD
+        )
+        return self.conn.cursor()
+
+    def exec_test(self):
+        # execute a statement
+        print('PostgreSQL database version:')
+        self.cursor.execute('SELECT version()')
+
+        # display the PostgreSQL database server version
+        db_version = self.cursor.fetchone()
+        print(db_version)
+
+        # close the communication with the PostgreSQL
+        self.cursor.close()
+        return db_version
+
+
+a = DatabaseConnection()
+
 if __name__ == '__main__':
-    connect()
+    a = DatabaseConnection()
+    a.exec_test()
